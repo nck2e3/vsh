@@ -13,6 +13,9 @@ struct command {
 //Function prototypes for custom commands...
 void mycmd_handler();
 void hello_handler();
+void help_handler();
+void date_handler();
+void rainbow_handler();
 
 //Function to execute custom commands...
 int execute_custom_command(char* input);
