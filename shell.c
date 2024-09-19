@@ -150,6 +150,7 @@ void child_repl() {
         if (strcmp(args[0], "cd") == 0) {
             if (args[1] == NULL) {
                 fprintf(stderr, "%sERROR: \"CD\" Expected and Argument!\n", ERROR_COLOR);
+                perror("")
             } else {
                 cd_handler(args[1]);  // Change directory...
 
