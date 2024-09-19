@@ -1,3 +1,4 @@
+//shell.c
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -115,12 +116,21 @@ void child_repl() {
             printf("Exiting shell.\n");
             break;
         }
+        //Check if the command is `cd`...
+        if (strcmp(args[0], "cd") == 0) {
+            if (args[1] == NULL) {
+                fprintf(stderr, "cd: expected argument\n");
+            } else {
+                cd_handler(args[1]);
+            }
+            continue;
+        }        
 
         //Check if the input is a custom command...
         if (execute_custom_command(input)) { 
             //execute_custom_command is from "custom_commands.h"
             continue;  //Skip the execvp() part for custom commands...
-        }
+        }        
 
         //Tokenize input into command and arguments...
         int i = 0;
