@@ -10,6 +10,12 @@ void mycmd_handler() {
     printf("Executing my custom command!\n");
 }
 
+void cd_handler(char* path) {
+    if (chdir(path) != 0) {
+        perror("cd failed");
+    }
+}
+
 // Function for 'hello'...
 void hello_handler() {
     printf("Hello, world!\n");
@@ -61,6 +67,7 @@ struct command custom_commands[] = {
     {"help", help_handler},
     {"date", date_handler},
     {"rainbow", rainbow_handler}, // Add the rainbow command...
+    {"cd", cd_handler}, 
     {NULL, NULL} // End of the table...
 };
 
