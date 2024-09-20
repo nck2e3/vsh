@@ -31,6 +31,7 @@ void help_handler() {
     printf(" - hello: Prints 'Hello, world!'\n");
     printf(" - date: Gives the date\n");
     printf(" - rainbow: Displays rainbow text\n");
+    printf(" - stand: A question...\n");
     printf(" - Any system command (e.g., ls, pwd, cat, etc.)\n");
 }
 
@@ -62,6 +63,13 @@ void rainbow_handler() {
     printf("%s\n", RESET_COLOR); // Reset color and move to the next line
 }
 
+void stand_handler() {
+    char x[100]; //Allocate memory for input string (really a char array)...
+    printf("What do you stand on?\n");
+    fgets(x, sizeof(x), stdin); //Get user input from input stream...
+    printf("Prove that you stand on %s", x);
+}
+
 // Custom command table definition...
 struct command custom_commands[] = {
     {"mycmd", mycmd_handler},
@@ -70,6 +78,7 @@ struct command custom_commands[] = {
     {"date", date_handler},
     {"rainbow", rainbow_handler}, // Add the rainbow command...
     {"cd", cd_handler}, 
+     {"stand", stand_handler}, 
     {NULL, NULL} // End of the table...
 };
 

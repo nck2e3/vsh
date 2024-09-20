@@ -17,6 +17,7 @@ void help_handler();
 void date_handler();
 void rainbow_handler();
 void cd_handler();
+void stand_handler();
 
 //Function to execute custom commands...
 int execute_custom_command(char* input);
