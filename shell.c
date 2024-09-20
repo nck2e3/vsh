@@ -7,6 +7,7 @@
 #include <limits.h>
 #include "custom_commands.h"  // Include the custom commands header
 
+//Color escape sequences using preprocessor directive (tells compiler to replace all instances of X_COLOR with escape sequences)
 #define RESET_COLOR "\033[0m"          // White for RESET...
 #define USER_COLOR "\033[1;32m"        // Bright green for username...
 #define FORMATTING_COLOR "\033[0m"     // White for the formatting...
@@ -92,10 +93,10 @@ void generate_prompt(char* prompt, size_t prompt_len) {
         hostname, 
         RESET_COLOR, 
         FORMATTING_COLOR, 
-        FORMATTING_COLOR,  // Left bracket for cwd in white
-        USER_COLOR,        // Directory in green
+        FORMATTING_COLOR,
+        USER_COLOR,       
         cwd, 
-        FORMATTING_COLOR,  // Right bracket for cwd in white
+        FORMATTING_COLOR, 
         RESET_COLOR);
 
 
@@ -107,9 +108,9 @@ void child_repl() {
     char* args[10];
     pid_t pid;
     int status;
-    char prompt[512];  // Assuming the total prompt won't exceed 511 characters...
+    char prompt[512];  // Assuming the total prompt won't exceed 512 characters...
 
-    // Generate the prompt with username, hostname, and current directory...
+    //Generate the prompt with username, hostname, and current directory...
     generate_prompt(prompt, sizeof(prompt));
        
     while (1) {
@@ -117,16 +118,16 @@ void child_repl() {
         printf("%s%s ► %s", prompt, FORMATTING_COLOR, RESET_COLOR);
         fflush(stdout);
 
-        // Get user input...
+        //Get user input from input stream buffer...
         if (fgets(input, sizeof(input), stdin) == NULL) {
             perror("fgets(...) failure!");
             exit(1);
         }
 
-        // Remove the newline character...
-        input[strcspn(input, "\n")] = '\0';
+        //Remove the newline character...
+        input[strcspn(input, "\n")] = '\0'; 
 
-        // If the user types "exit", break out of the loop...
+        //If the user types "exit", break out of the loop...
         if (strcmp(input, "exit") == 0) {
             printf("Exiting shell.\n");
             break;
@@ -134,11 +135,11 @@ void child_repl() {
 
         // Check if the input is a custom command...
         if (execute_custom_command(input)) { 
-            // execute_custom_command is from "custom_commands.h"
-            continue;  // Skip the execvp() part for custom commands...
+            //execute_custom_command is from "custom_commands.h"
+            continue;  //Skip the execvp() part for custom commands...
         }
 
-        // Tokenize input into command and arguments...
+        //Tokenize input string into command and associated arguments...
         int i = 0;
         args[i] = strtok(input, " ");
         while (args[i] != NULL) {
@@ -150,7 +151,7 @@ void child_repl() {
         if (strcmp(args[0], "cd") == 0) {
             if (args[1] == NULL) {
                 fprintf(stderr, "%sERROR: \"CD\" Expected and Argument!\n", ERROR_COLOR);
-                perror("")
+                perror("");
             } else {
                 cd_handler(args[1]);  // Change directory...
 
@@ -160,21 +161,21 @@ void child_repl() {
             continue;
         }
 
-        // Fork a new process to run the command...
+        //Fork a new process to run the command...
         pid = fork();
         if (pid == -1) {
-            fprintf(stderr, "%sERROR: fork(...) failure! ", ERROR_COLOR);  // Use fprintf for formatted output
-            perror("");  // perror automatically prints the system error message
+            fprintf(stderr, "%sERROR: fork(...) failure! ", ERROR_COLOR);  //Write to error stream (stderr)...
+            perror("");  //Print the error stream to terminal...
             exit(1);
         } else if (pid == 0) {
             // This is the new child process for the command...
             if (execvp(args[0], args)) {
-                fprintf(stderr, "%sERROR: execvp(...) failure! ", ERROR_COLOR);  // Use fprintf for formatted output
-                perror("");  // perror prints the error message
+                fprintf(stderr, "%sERROR: execvp(...) failure! ", ERROR_COLOR);  //Write to error stream (stderr)...
+                perror(""); //Print the error stream to terminal...
                 exit(1);
             }
         } else {
-            // REPL process: wait for the command child process to finish...
+            //REPL process: wait for the command child process to finish...
             if (waitpid(pid, &status, 0) == -1) {
                 fprintf(stderr, "%sERROR: waitpid(...) failure! ", ERROR_COLOR);  // Use fprintf for formatted output
                 perror("");  // perror prints the error message
